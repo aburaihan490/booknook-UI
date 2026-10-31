@@ -23,7 +23,7 @@ const quickLinks = [
 
 const Footer = () => {
     return (
-        <footer className="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
+        <footer className="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800 mt-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
                 {/* Logo & About */}
                 <div className="space-y-4">

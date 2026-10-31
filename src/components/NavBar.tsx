@@ -67,6 +67,13 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
         currentUser?.photo ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150';
 
+    const isActive = (href: string) => {
+        if (href === '/') {
+            return pathname === '/';
+        }
+
+        return pathname === href || pathname.startsWith(`${href}/`);
+    };
     return (
         <>
             <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
@@ -98,7 +105,7 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
                                 key={link.href}
                                 href={link.href}
                                 className={`transition-colors hover:text-emerald-800 ${
-                                    pathname === link.href
+                                    isActive(link.href)
                                         ? 'text-emerald-800 font-bold border-b-2 border-emerald-800 pb-1'
                                         : ''
                                 }`}
@@ -222,7 +229,7 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
                                 href={link.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`block w-full text-left font-semibold text-lg py-1 ${
-                                    pathname === link.href
+                                    isActive(link.href)
                                         ? 'text-emerald-800'
                                         : 'text-stone-800'
                                 }`}
