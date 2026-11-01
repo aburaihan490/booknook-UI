@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 const NewArrivals = async () => {
     const books = await getAllBooks();
-    console.log(books);
     const newArrivals = [...books].reverse().slice(0, 6);
     return (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,6 +41,7 @@ const NewArrivals = async () => {
                                 height={500}
                                 src={book.cover}
                                 alt={book.title}
+                                loading="eager"
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                             <span className="absolute top-4 left-4 bg-stone-900/80 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">
