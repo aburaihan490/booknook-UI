@@ -1,105 +1,11 @@
+import { getAllBooks } from '@/query/getAllBooks';
 import { ArrowRight, Star } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
-const books = [
-    {
-        id: 1,
-        title: 'The Midnight Library',
-        author: 'Matt Haig',
-        category: 'Fiction',
-        cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600',
-        rating: 4.8,
-        description:
-            'Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived.',
-        copies: 5,
-        addedBy: 'system',
-    },
-    {
-        id: 2,
-        title: 'Atomic Habits',
-        author: 'James Clear',
-        category: 'Self-Help',
-        cover: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=600',
-        rating: 4.9,
-        description:
-            'No matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear reveals practical strategies that will teach you exactly how to form good habits.',
-        copies: 3,
-        addedBy: 'system',
-    },
-    {
-        id: 3,
-        title: 'Project Hail Mary',
-        author: 'Andy Weir',
-        category: 'Sci-Fi',
-        cover: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=600',
-        rating: 4.9,
-        description:
-            'A lone astronaut must save the earth from a disaster in this incredible new science-fiction thriller from the author of The Martian.',
-        copies: 4,
-        addedBy: 'system',
-    },
-    {
-        id: 4,
-        title: 'Educated: A Memoir',
-        author: 'Tara Westover',
-        category: 'Biography',
-        cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600',
-        rating: 4.7,
-        description:
-            'A memoir about a young girl who, kept out of school, leaves her survivalist family and goes on to earn a PhD from Cambridge University.',
-        copies: 2,
-        addedBy: 'system',
-    },
-    {
-        id: 5,
-        title: 'Dune',
-        author: 'Frank Herbert',
-        category: 'Sci-Fi',
-        cover: 'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600',
-        rating: 4.8,
-        description:
-            'Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world.',
-        copies: 6,
-        addedBy: 'system',
-    },
-    {
-        id: 6,
-        title: 'The Silent Patient',
-        author: 'Alex Michaelides',
-        category: 'Mystery',
-        cover: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=600',
-        rating: 4.6,
-        description:
-            'Alicia Berenson’s life is suddenly cut short when she shoots her husband five times in the face and never speaks another word.',
-        copies: 3,
-        addedBy: 'system',
-    },
-    {
-        id: 7,
-        title: 'Sapiens: A Brief History',
-        author: 'Yuval Noah Harari',
-        category: 'History',
-        cover: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600',
-        rating: 4.7,
-        description:
-            'From a notable historian comes a gripping narrative of human creation and evolution—from the Stone Age to modern times.',
-        copies: 4,
-        addedBy: 'system',
-    },
-    {
-        id: 8,
-        title: 'Kite Runner',
-        author: 'Khaled Hosseini',
-        category: 'Fiction',
-        cover: 'https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&q=80&w=600',
-        rating: 4.9,
-        description:
-            "The unforgettable, heartbreaking story of the friendship between a wealthy boy and the son of his father's servant.",
-        copies: 2,
-        addedBy: 'system',
-    },
-];
 
-const NewArrivals = () => {
+const NewArrivals = async () => {
+    const books = await getAllBooks();
+    console.log(books);
     const newArrivals = [...books].reverse().slice(0, 6);
     return (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,11 +33,13 @@ const NewArrivals = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {newArrivals.map((book) => (
                     <div
-                        key={book.id}
+                        key={book._id}
                         className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
                     >
                         <div className="relative h-72 overflow-hidden bg-stone-100">
-                            <img
+                            <Image
+                                width={500}
+                                height={500}
                                 src={book.cover}
                                 alt={book.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -163,7 +71,7 @@ const NewArrivals = () => {
                                     {book.copies} Copies Available
                                 </span>
                                 <Link
-                                    href={`/books/${book.id}`}
+                                    href={`/books/${book._id}`}
                                     className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white text-sm font-bold rounded-xl shadow-md transition-all hover:scale-105"
                                 >
                                     View Details

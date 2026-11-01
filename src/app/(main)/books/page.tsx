@@ -1,7 +1,9 @@
-import React from 'react';
+import AllBooksView from '@/components/AllBooksView';
+import { getAllBooks } from '@/query/getAllBooks';
+import { BookType } from '@/types';
 
-const page = () => {
-    return <div></div>;
-};
+export default async function AllBooksPage() {
+    const books: BookType[] = await getAllBooks();
 
-export default page;
+    return <AllBooksView books={books} />;
+}
