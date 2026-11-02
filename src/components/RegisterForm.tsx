@@ -45,13 +45,14 @@ export default function RegisterForm() {
                 toast.danger('Registration failed', {
                     description: error.message || 'Please try again.',
                 });
+                return;
             }
 
             if (data) {
                 toast.success('Account created successfully!', {
                     description: `Welcome to BookNook, ${name}!`,
                 });
-                router.push('/');
+                router.push('/login');
                 router.refresh();
             }
         } catch (error) {
@@ -80,7 +81,7 @@ export default function RegisterForm() {
                     placeholder="Enter your full name"
                     required
                     autoComplete="name"
-                    className="h-[50px] w-full rounded-xl border border-[#e1e1e1] bg-[#fafafa] px-4 text-sm outline-none transition placeholder:text-[#a0aec0] focus:border-[#10664e] focus:ring-2 focus:ring-[#10664e]/10"
+                    className="h-12.5 w-full rounded-xl border border-[#e1e1e1] bg-[#fafafa] px-4 text-sm outline-none transition placeholder:text-[#a0aec0] focus:border-[#10664e] focus:ring-2 focus:ring-[#10664e]/10"
                 />
             </div>
 

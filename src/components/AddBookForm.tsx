@@ -16,6 +16,7 @@ const AddBookForm = () => {
                 {
                     method: 'POST',
                     headers: {
+                        authorization: `Bearer ${process.env.NEXT_PUBLIC_BACKEND_API_KEY}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({

@@ -113,9 +113,14 @@ export default function AllBooksView({ books }: AllBooksViewProps) {
                                 {/* Buttons */}
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
-                                        onClick={() =>
-                                            router.push(`/books/${book._id}`)
-                                        }
+                                        onClick={() => {
+                                            console.log('Book ID:', book._id);
+                                            console.log(
+                                                'Book ID Type:',
+                                                typeof book._id,
+                                            );
+                                            router.push(`/books/${book._id}`);
+                                        }}
                                         className="py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition-colors"
                                     >
                                         Details

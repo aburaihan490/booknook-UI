@@ -3,19 +3,10 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BookOpen, User, LogOut, X, Menu } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-
-interface CurrentUser {
-    name: string;
-    email: string;
-    photo?: string;
-}
-
-interface NavBarProps {
-    currentUser?: CurrentUser | null;
-    onLogout?: () => void | Promise<void>;
-}
+import { authClient } from '@/lib/auth-client';
+import { toast } from '@heroui/react';
 
 const navLinks = [
     { name: 'Home', href: '/' },
@@ -25,48 +16,19 @@ const navLinks = [
     { name: 'My Borrows', href: '/my-borrows' },
 ];
 
-const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
+const NavBar = () => {
+    const { data: currentUser, isPending } = authClient.useSession();
+
     const router = useRouter();
     const pathname = usePathname();
 
-    const [toast, setToast] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-    useEffect(() => {
-        if (!toast) return;
-
-        const timer = setTimeout(() => {
-            setToast(null);
-        }, 3000);
-
-        return () => clearTimeout(timer);
-    }, [toast]);
-
-    const navigateTo = (path: string) => {
-        router.push(path);
-        setIsMobileMenuOpen(false);
-        setIsUserDropdownOpen(false);
-    };
-
-    const handleLogout = async () => {
-        try {
-            await onLogout?.();
-
-            setIsUserDropdownOpen(false);
-            setIsMobileMenuOpen(false);
-            setToast('Successfully logged out!');
-
-            router.push('/');
-        } catch {
-            setToast('Logout failed!');
-        }
-    };
-
     const userPhoto =
-        currentUser?.photo ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150';
 
+    // Active link detection logic
     const isActive = (href: string) => {
         if (href === '/') {
             return pathname === '/';
@@ -74,6 +36,20 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
 
         return pathname === href || pathname.startsWith(`${href}/`);
     };
+
+    const handleLogout = async () => {
+        try {
+            await authClient.signOut();
+            setIsUserDropdownOpen(false);
+            toast.success('Logged out successfully!');
+            router.push('/login');
+            router.refresh();
+        } catch (error) {
+            console.error('Logout failed:', error);
+            toast.danger('Logout failed. Please try again.');
+        }
+    };
+
     return (
         <>
             <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
@@ -117,7 +93,9 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
 
                     {/* Desktop Auth */}
                     <div className="hidden md:flex items-center gap-4">
-                        {currentUser ? (
+                        {isPending ? (
+                            <div className="p-0 animate-pulse"></div>
+                        ) : currentUser?.user ? (
                             <div className="relative">
                                 <button
                                     onClick={() =>
@@ -128,7 +106,7 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
                                     className="flex items-center gap-3 p-1.5 pl-3 rounded-full border border-stone-200 hover:border-emerald-600 transition-all bg-stone-50"
                                 >
                                     <span className="text-sm font-semibold text-stone-800">
-                                        {currentUser.name}
+                                        {currentUser?.user?.name}
                                     </span>
 
                                     <Image
@@ -148,23 +126,21 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
                                             </p>
 
                                             <p className="text-sm font-bold text-stone-800 truncate">
-                                                {currentUser.email}
+                                                {currentUser?.user?.email}
                                             </p>
                                         </div>
 
-                                        <button
-                                            onClick={() =>
-                                                navigateTo('/profile')
-                                            }
+                                        <Link
+                                            href="/profile"
                                             className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-emerald-50 hover:text-emerald-900 flex items-center gap-2 font-medium"
                                         >
                                             <User size={16} />
                                             My Profile
-                                        </button>
+                                        </Link>
 
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium"
+                                            className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium cursor-pointer"
                                         >
                                             <LogOut size={16} />
                                             Logout
@@ -193,7 +169,7 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
 
                     {/* Mobile Menu Button */}
                     <div className="md:hidden flex items-center gap-3">
-                        {currentUser && (
+                        {currentUser?.user && (
                             <Image
                                 width={32}
                                 height={32}
@@ -240,7 +216,7 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
 
                         <hr className="border-stone-100 my-2" />
 
-                        {currentUser ? (
+                        {currentUser?.user ? (
                             <div className="space-y-3 pt-2">
                                 <div className="flex items-center gap-3">
                                     <Image
@@ -253,11 +229,11 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
 
                                     <div>
                                         <p className="font-bold text-stone-900">
-                                            {currentUser.name}
+                                            {currentUser?.user?.name}
                                         </p>
 
                                         <p className="text-xs text-stone-500">
-                                            {currentUser.email}
+                                            {currentUser?.user?.email}
                                         </p>
                                     </div>
                                 </div>
@@ -270,10 +246,7 @@ const NavBar = ({ currentUser = null, onLogout }: NavBarProps) => {
                                     My Profile
                                 </Link>
 
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl flex items-center justify-center gap-2"
-                                >
+                                <button className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl flex items-center justify-center gap-2">
                                     <LogOut size={18} />
                                     Logout
                                 </button>

@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { authClient } from '@/lib/auth-client';
+import { toast } from '@heroui/react';
+import { redirect, useRouter } from 'next/navigation';
 
 export default function LoginForm() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
@@ -19,9 +23,27 @@ export default function LoginForm() {
             setIsLoading(true);
 
             // TODO: Better Auth integration
-            console.log({ email, password });
+            const { data, error } = await authClient.signIn.email({
+                email: email,
+                password: password,
+                // rememberMe: true,
+            });
+
+            if (error) {
+                console.error('Login failed:', error);
+                toast.danger(error.message || 'Login failed!');
+                return;
+                // Handle login error (e.g., show an error message)
+            }
+
+            if (data) {
+                console.log('Login successful:', data);
+                toast.success('Login successful! Welcome back.');
+            }
+            router.push('/');
         } catch (error) {
             console.error('Login failed:', error);
+            toast.danger('Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);
         }
