@@ -1,12 +1,6 @@
 import AddBookForm from '@/components/AddBookForm';
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
 
 const AddBookView = async () => {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    console.log(session);
     return (
         <div className="max-w-3xl mx-auto px-4 py-12">
             <div className="bg-white rounded-3xl border border-stone-200 shadow-xl p-8 sm:p-12 space-y-8">

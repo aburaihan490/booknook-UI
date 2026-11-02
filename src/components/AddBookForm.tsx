@@ -1,29 +1,44 @@
 'use client';
+import { authClient } from '@/lib/auth-client';
 import { toast } from '@heroui/react';
 
 const AddBookForm = () => {
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const { data: session } = authClient.useSession();
+
+    const userId = session?.user?.id;
+
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const form = e.currentTarget;
         const formData = new FormData(form);
-
         const bookData = Object.fromEntries(formData.entries());
 
+        const AddData = {
+            ...bookData,
+            userId,
+            rating: Number(bookData.rating),
+            copies: Number(bookData.copies),
+        };
+
         try {
+            const { data, error } = await authClient.token();
+            if (error || !data?.token) {
+                toast.danger('Network error', {
+                    description: `${error?.message} || Unauthorized access. Please log in again.`,
+                });
+            }
+            const jwtToken = data?.token;
+
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/add-book`,
                 {
                     method: 'POST',
                     headers: {
-                        authorization: `Bearer ${process.env.NEXT_PUBLIC_BACKEND_API_KEY}`,
+                        authorization: `Bearer ${jwtToken}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        ...bookData,
-                        rating: Number(bookData.rating),
-                        copies: Number(bookData.copies),
-                    }),
+                    body: JSON.stringify(AddData),
                 },
             );
 
