@@ -1,7 +1,6 @@
 import MyBookList from '@/components/MyBookList';
 import { auth } from '@/lib/auth';
 import { MyBooksList } from '@/query/myBooks';
-import { BookType } from '@/types';
 import { PlusCircle } from 'lucide-react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
