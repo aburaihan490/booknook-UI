@@ -7,6 +7,8 @@ import BookSearch from './BookSearch';
 import Image from 'next/image';
 import { BookType } from '@/types';
 import { Star, BookOpen } from 'lucide-react';
+import Link from 'next/link';
+import BroowActionButton from './common/BroowActionButton';
 interface AllBooksViewProps {
     books: BookType[];
 }
@@ -112,31 +114,17 @@ export default function AllBooksView({ books }: AllBooksViewProps) {
 
                                 {/* Buttons */}
                                 <div className="grid grid-cols-2 gap-2">
-                                    <button
-                                        onClick={() => {
-                                            console.log('Book ID:', book._id);
-                                            console.log(
-                                                'Book ID Type:',
-                                                typeof book._id,
-                                            );
-                                            router.push(`/books/${book._id}`);
-                                        }}
-                                        className="py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition-colors"
+                                    <Link
+                                        href={`/books/${book._id}`}
+                                        className="py-2.5 text-center bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition-colors cursor-pointer"
                                     >
                                         Details
-                                    </button>
-
-                                    <button
-                                        onClick={() =>
-                                            router.push(`/books/${book._id}`)
-                                        }
-                                        disabled={book.copies <= 0}
-                                        className="py-2.5 bg-emerald-800 hover:bg-emerald-900 disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl shadow-md transition-all"
-                                    >
-                                        {book.copies > 0
-                                            ? 'Borrow'
-                                            : 'Unavailable'}
-                                    </button>
+                                    </Link>
+                                    <BroowActionButton
+                                        big={false}
+                                        copies={book?.copies}
+                                        bookId={book?._id.toString()}
+                                    />
                                 </div>
                             </div>
                         </div>

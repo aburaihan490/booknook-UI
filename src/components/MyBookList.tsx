@@ -7,11 +7,13 @@ import { useState } from 'react';
 import DeleteConfirmation from './DeleteConfirmation';
 import { toast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
+import EditBookModal from './EditBookModal';
 
 const MyBookList = ({ book }: { book: BookType }) => {
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     // handle delete and edit actions
     const onDelete = async (bookId: number) => {
@@ -32,9 +34,9 @@ const MyBookList = ({ book }: { book: BookType }) => {
                 `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/delete-book/${bookId}`,
                 {
                     method: 'DELETE',
-                    // headers: {
-                    //     Authorization: `Bearer ${jwtToken}`,
-                    // },
+                    headers: {
+                        Authorization: `Bearer ${jwtToken}`,
+                    },
                 },
             );
 
@@ -57,10 +59,6 @@ const MyBookList = ({ book }: { book: BookType }) => {
         }
     };
 
-    const onEdit = (book: BookType) => {
-        // Implement edit functionality here
-        console.log(`Edit book: ${book.title}`);
-    };
     return (
         <div>
             <div className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl ">
@@ -111,7 +109,7 @@ const MyBookList = ({ book }: { book: BookType }) => {
                     {/* Actions */}
                     <div className="flex shrink-0 items-center gap-y-4 sm:flex-col sm:items-stretch">
                         <button
-                            onClick={() => onEdit(book)}
+                            onClick={() => setShowEditModal(true)}
                             className="flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-semibold cursor-pointer text-white transition hover:bg-emerald-900 active:scale-95"
                         >
                             <Pencil size={15} />
@@ -137,6 +135,11 @@ const MyBookList = ({ book }: { book: BookType }) => {
                 onConfirm={async () => {
                     await onDelete(book._id);
                 }}
+            />
+            <EditBookModal
+                book={book}
+                isOpen={showEditModal}
+                onClose={() => setShowEditModal(false)}
             />
         </div>
     );

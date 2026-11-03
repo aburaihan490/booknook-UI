@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Star } from 'lucide-react';
 import { getBookDetails } from '@/query/getBookDetails';
-
+import BroowActionButton from '@/components/common/BroowActionButton';
+    
 export default async function BookDetails({
     params,
 }: {
@@ -28,7 +29,7 @@ export default async function BookDetails({
                 {/* Book Details Card */}
                 <div className="grid gap-8 rounded-3xl border border-gray-200 bg-white p-5 shadow-xl md:grid-cols-[minmax(280px,355px)_1fr] md:gap-8 md:p-12">
                     {/* Book Cover */}
-                    <div className="relative h-[430px] overflow-hidden rounded-2xl bg-gray-100 shadow-lg sm:h-[500px] md:h-[532px]">
+                    <div className="relative h-107.5 overflow-hidden rounded-2xl bg-gray-100 shadow-lg sm:h-125 md:h-133">
                         <Image
                             src={book.cover}
                             alt={book.title}
@@ -87,17 +88,12 @@ export default async function BookDetails({
                         {/* Borrow Button */}
                         <div className="mt-auto pt-10">
                             <div className="mb-6 border-t border-gray-100" />
-
-                            <button
-                                type="button"
-                                // onClick={handleBorrow}
-                                disabled={!isAvailable}
-                                className="w-full rounded-2xl bg-emerald-800 px-6 py-4 text-base font-bold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:shadow-none cursor-pointer"
-                            >
-                                {isAvailable
-                                    ? 'Borrow Book Now'
-                                    : 'Book Unavailable'}
-                            </button>
+                            <BroowActionButton
+                                big={true}
+                                copies={book?.copies}
+                                isAvailable={isAvailable}
+                                bookId={id}
+                            />
                         </div>
                     </div>
                 </div>

@@ -138,8 +138,6 @@ const AddBookForm = () => {
                     <input
                         type="number"
                         name="copies"
-                        min="1"
-                        max="20"
                         className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-emerald-700"
                         required
                     />
