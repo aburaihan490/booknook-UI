@@ -1,6 +1,7 @@
 'use server';
 
 import { BorrowType } from '@/types';
+import { notFound } from 'next/navigation';
 
 export const getAllBorrow = async (userId: string): Promise<BorrowType[]> => {
     try {
@@ -12,9 +13,7 @@ export const getAllBorrow = async (userId: string): Promise<BorrowType[]> => {
             },
         );
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch borrowed books');
-        }
+        if (!response.ok) notFound();
 
         const result = await response.json();
 

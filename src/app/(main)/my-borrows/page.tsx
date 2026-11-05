@@ -1,7 +1,9 @@
 import MyBorrowsList from '@/components/MyBorrowsList';
 import { auth } from '@/lib/auth';
 import { getAllBorrow } from '@/query/getAllBorrow';
+import MyBorrowsSkeleton from '@/skeleton/MyBorrowsSkeleton';
 import { headers } from 'next/headers';
+import { Suspense } from 'react';
 
 const page = async () => {
     const session = await auth.api.getSession({
@@ -22,7 +24,9 @@ const page = async () => {
                     Track due dates and return borrowed books seamlessly.
                 </p>
             </div>
-            <MyBorrowsList books={borrow} />
+            <Suspense fallback={<MyBorrowsSkeleton />}>
+                <MyBorrowsList books={borrow} />
+            </Suspense>
         </div>
     );
 };
