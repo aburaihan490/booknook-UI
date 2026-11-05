@@ -21,7 +21,6 @@ export const getAllBorrow = async (): Promise<BorrowType[]> => {
         headers: {
             authorization: `Bearer ${jwtToken.token}`,
         },
-        cache: 'no-store',
     });
 
     if (!response.ok) {

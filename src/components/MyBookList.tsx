@@ -16,7 +16,7 @@ const MyBookList = ({ book }: { book: BookType }) => {
     const [showEditModal, setShowEditModal] = useState(false);
 
     // handle delete and edit actions
-    const onDelete = async (bookId: number) => {
+    const onDelete = async (bookId: string) => {
         console.log(`Delete book with ID: ${bookId}`);
 
         try {
@@ -133,7 +133,7 @@ const MyBookList = ({ book }: { book: BookType }) => {
                 isDeleting={isDeleting}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={async () => {
-                    await onDelete(book._id);
+                    await onDelete(String(book._id));
                 }}
             />
             <EditBookModal

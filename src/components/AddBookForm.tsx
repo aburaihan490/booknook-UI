@@ -10,7 +10,7 @@ const AddBookForm = () => {
 
     const userId = session?.user?.id;
 
-    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
         const formData = new FormData(form);
@@ -20,7 +20,7 @@ const AddBookForm = () => {
         // Image size validation
         const maxSize = 2 * 1024 * 1024; // 2MB
 
-        if (coverImage.size > maxSize) {
+        if (coverImage && coverImage.size > 0 && coverImage.size > maxSize) {
             toast.danger('Image too large', {
                 description: 'Maximum image size is 2MB.',
             });
@@ -60,15 +60,20 @@ const AddBookForm = () => {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || 'Failed to add book');
-            } else {
-                toast.success('Book added successfully!', {
-                    description: `"${bookTitle || 'Book'}" has been added to your library.`,
+                // ব্যাকএন্ডের আসল এরর মেসেজ হ্যান্ডলিং
+                toast.danger('Failed to add book', {
+                    description:
+                        result.message || 'Something went wrong on the server.',
                 });
+                return;
             }
+            toast.success('Book added successfully!', {
+                description: `"${bookTitle || 'Book'}" has been added to your library.`,
+            });
 
             form.reset();
         } catch (error) {
+            console.error('Submission Error:', error);
             toast.danger('Network error', {
                 description:
                     'Could not reach the server. Please try again later.',

@@ -1,6 +1,6 @@
 import AddBookForm from '@/components/AddBookForm';
 
-const AddBookView = async () => {
+const AddBookView = () => {
     return (
         <div className="max-w-3xl mx-auto px-4 py-12">
             <div className="bg-white rounded-3xl border border-stone-200 shadow-xl p-8 sm:p-12 space-y-8">
