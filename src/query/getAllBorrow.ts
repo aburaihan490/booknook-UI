@@ -19,19 +19,13 @@ export const getAllBorrow = async (): Promise<BorrowType[]> => {
                 },
             },
         );
-
-        if (!response.ok) {
-            // Read the error body from the backend if possible for better debugging
-            const errorText = await response.text();
-            console.error(
-                `Backend failed with status ${response.status}:`,
-                errorText,
-            );
-            throw new Error(
-                `Failed to fetch borrows: ${response.status} ${response.statusText}`,
-            );
+        if (response.status === 404) {
+            notFound();
         }
 
+        if (!response.ok) {
+            throw new Error(`Failed to fetch books: ${response.status}`);
+        }
         const result = await response.json();
 
         if (!result.success) {
