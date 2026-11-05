@@ -41,6 +41,7 @@ const NavBar = () => {
         try {
             await authClient.signOut();
             setIsUserDropdownOpen(false);
+            setIsMobileMenuOpen(false);
             toast.success('Logged out successfully!');
             router.push('/login');
             router.refresh();
@@ -50,8 +51,22 @@ const NavBar = () => {
         }
     };
 
+    const handleProfileClick = () => {
+        setIsUserDropdownOpen(false);
+        setIsMobileMenuOpen(false);
+        router.push('/profile');
+    };
+
     return (
         <>
+            {/* Click Outside Backdrop for Desktop User Dropdown */}
+            {isUserDropdownOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-transparent"
+                    onClick={() => setIsUserDropdownOpen(false)}
+                />
+            )}
+
             <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                     {/* Logo */}
@@ -96,7 +111,7 @@ const NavBar = () => {
                         {isPending ? (
                             <div className="p-0 animate-pulse"></div>
                         ) : currentUser?.user ? (
-                            <div className="relative">
+                            <div className="relative z-50">
                                 <button
                                     onClick={() =>
                                         setIsUserDropdownOpen(
@@ -112,7 +127,9 @@ const NavBar = () => {
                                     <Image
                                         width={40}
                                         height={40}
-                                        src={userPhoto}
+                                        src={
+                                            currentUser?.user.image || userPhoto
+                                        }
                                         alt="User"
                                         className="w-9 h-9 rounded-full object-cover border-2 border-emerald-700 shadow-sm"
                                     />
@@ -130,13 +147,13 @@ const NavBar = () => {
                                             </p>
                                         </div>
 
-                                        <Link
-                                            href="/profile"
-                                            className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-emerald-50 hover:text-emerald-900 flex items-center gap-2 font-medium"
+                                        <button
+                                            onClick={handleProfileClick}
+                                            className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-emerald-50 hover:text-emerald-900 flex items-center gap-2 font-medium cursor-pointer"
                                         >
                                             <User size={16} />
                                             My Profile
-                                        </Link>
+                                        </button>
 
                                         <button
                                             onClick={handleLogout}
@@ -173,7 +190,7 @@ const NavBar = () => {
                             <Image
                                 width={32}
                                 height={32}
-                                src={userPhoto}
+                                src={currentUser?.user?.image || userPhoto}
                                 alt="User"
                                 className="w-8 h-8 rounded-full object-cover border border-emerald-700"
                             />
@@ -222,7 +239,10 @@ const NavBar = () => {
                                     <Image
                                         width={40}
                                         height={40}
-                                        src={userPhoto}
+                                        src={
+                                            currentUser?.user?.image ||
+                                            userPhoto
+                                        }
                                         alt=""
                                         className="w-10 h-10 rounded-full object-cover"
                                     />
@@ -238,15 +258,17 @@ const NavBar = () => {
                                     </div>
                                 </div>
 
-                                <Link
-                                    href="/profile"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block w-full py-3 text-center bg-emerald-50 text-emerald-800 font-bold rounded-xl"
+                                <button
+                                    onClick={handleProfileClick}
+                                    className="block w-full py-3 text-center bg-emerald-50 text-emerald-800 font-bold rounded-xl cursor-pointer"
                                 >
                                     My Profile
-                                </Link>
+                                </button>
 
-                                <button className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl flex items-center justify-center gap-2">
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                                >
                                     <LogOut size={18} />
                                     Logout
                                 </button>

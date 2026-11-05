@@ -1,32 +1,48 @@
 'use client';
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@heroui/react';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 const AddBookForm = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { data: session } = authClient.useSession();
 
     const userId = session?.user?.id;
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         const form = e.currentTarget;
         const formData = new FormData(form);
-        const bookData = Object.fromEntries(formData.entries());
+        const bookTitle = formData.get('title') as string;
+        const coverImage = formData.get('cover') as File;
 
-        const AddData = {
-            ...bookData,
-            userId,
-            rating: Number(bookData.rating),
-            copies: Number(bookData.copies),
-        };
+        // Image size validation
+        const maxSize = 2 * 1024 * 1024; // 2MB
+
+        if (coverImage.size > maxSize) {
+            toast.danger('Image too large', {
+                description: 'Maximum image size is 2MB.',
+            });
+            return;
+        }
+        if (!userId) {
+            toast.danger('Unauthorized access', {
+                description: 'Please log in again before adding a book.',
+            });
+            return;
+        }
+
+        formData.append('userId', userId);
 
         try {
+            setIsLoading(true);
             const { data, error } = await authClient.token();
             if (error || !data?.token) {
                 toast.danger('Network error', {
                     description: `${error?.message} || Unauthorized access. Please log in again.`,
                 });
+                return;
             }
             const jwtToken = data?.token;
 
@@ -36,9 +52,8 @@ const AddBookForm = () => {
                     method: 'POST',
                     headers: {
                         authorization: `Bearer ${jwtToken}`,
-                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(AddData),
+                    body: formData,
                 },
             );
 
@@ -48,7 +63,7 @@ const AddBookForm = () => {
                 throw new Error(result.message || 'Failed to add book');
             } else {
                 toast.success('Book added successfully!', {
-                    description: `"${bookData.title || 'Book'}" has been added to your library.`,
+                    description: `"${bookTitle || 'Book'}" has been added to your library.`,
                 });
             }
 
@@ -58,6 +73,8 @@ const AddBookForm = () => {
                 description:
                     'Could not reach the server. Please try again later.',
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -147,11 +164,11 @@ const AddBookForm = () => {
             {/* Cover Image */}
             <div className="space-y-2">
                 <label className="text-xs font-bold text-stone-700 uppercase tracking-wider">
-                    Cover Image URL *
+                    Cover Image *
                 </label>
 
                 <input
-                    type="url"
+                    type="file"
                     name="cover"
                     placeholder="https://images.unsplash.com/photo-..."
                     className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-emerald-700"
@@ -177,9 +194,18 @@ const AddBookForm = () => {
             {/* Submit Button */}
             <button
                 type="submit"
-                className="w-full py-4 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-2xl shadow-xl shadow-emerald-800/20 transition-all hover:scale-[1.01]"
+                disabled={isLoading}
+                className="w-full py-4 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-2xl shadow-xl shadow-emerald-800/20 transition-all hover:scale-[1.01] flex items-center justify-center"
             >
-                Add Book to Catalog
+                {isLoading ? (
+                    <>
+                        <span>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        </span>
+                    </>
+                ) : (
+                    'Add Book to Catalog'
+                )}
             </button>
         </form>
     );

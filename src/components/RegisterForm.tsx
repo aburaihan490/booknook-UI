@@ -11,6 +11,23 @@ export default function RegisterForm() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    // validation Password
+    const validatePassword = (password: string) => {
+        if (password.length < 6) {
+            return 'Password must be at least 6 characters long.';
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            return 'Password must contain at least one uppercase letter.';
+        }
+
+        if (!/[a-z]/.test(password)) {
+            return 'Password must contain at least one lowercase letter.';
+        }
+
+        return '';
+    };
+
     const handleRegister = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -18,27 +35,32 @@ export default function RegisterForm() {
 
         const name = formData.get('name') as string;
         const email = formData.get('email') as string;
+        const image = formData.get('image') as string;
         const password = formData.get('password') as string;
         const confirmPassword = formData.get('confirmPassword') as string;
 
-        if (password !== confirmPassword) {
-            // setError('Passwords do not match!');
+        // Password validation
+        const error = validatePassword(password);
+
+        if (error) {
+            toast.danger(error);
             return;
         }
 
-        if (password.length < 8) {
-            // setError('Password must be at least 8 characters.');
+        if (password !== confirmPassword) {
+            toast.danger('Passwords do not match!');
             return;
         }
 
         try {
             setIsLoading(true);
 
-            // TODO: Better Auth registration integration
+            // Better Auth registration integration with image/photo URL
             const { data, error } = await authClient.signUp.email({
-                name: name,
-                email: email,
-                password: password,
+                name,
+                email,
+                password,
+                image: image || undefined, // Send image if provided
             });
 
             if (error) {
@@ -105,6 +127,25 @@ export default function RegisterForm() {
                 />
             </div>
 
+            {/* Photo-URL */}
+            <div>
+                <label
+                    htmlFor="image"
+                    className="mb-3 block text-xs font-bold tracking-wide text-[#263449]"
+                >
+                    PHOTO URL (OPTIONAL)
+                </label>
+
+                <input
+                    id="image"
+                    name="image"
+                    type="url"
+                    placeholder="https://example.com/avatar.jpg"
+                    autoComplete="url"
+                    className="h-[50px] w-full rounded-xl border border-[#e1e1e1] bg-[#fafafa] px-4 text-sm outline-none transition placeholder:text-[#a0aec0] focus:border-[#10664e] focus:ring-2 focus:ring-[#10664e]/10"
+                />
+            </div>
+
             {/* Password */}
             <div>
                 <label
@@ -119,9 +160,9 @@ export default function RegisterForm() {
                         id="password"
                         name="password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Minimum 8 characters"
+                        placeholder="At least 6 chars (Uppercase & lowercase)"
                         required
-                        minLength={8}
+                        minLength={6}
                         autoComplete="new-password"
                         className="h-[50px] w-full rounded-xl border border-[#e1e1e1] bg-[#fafafa] px-4 pr-16 text-sm outline-none transition focus:border-[#10664e] focus:ring-2 focus:ring-[#10664e]/10"
                     />
@@ -152,7 +193,7 @@ export default function RegisterForm() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Confirm your password"
                         required
-                        minLength={8}
+                        minLength={6}
                         autoComplete="new-password"
                         className="h-[50px] w-full rounded-xl border border-[#e1e1e1] bg-[#fafafa] px-4 pr-16 text-sm outline-none transition focus:border-[#10664e] focus:ring-2 focus:ring-[#10664e]/10"
                     />

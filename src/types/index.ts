@@ -18,4 +18,5 @@ export interface BorrowType {
     userEmail: string;
     userId: string;
     borrowDate: string;
+    returnDate: string;
 }

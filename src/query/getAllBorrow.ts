@@ -1,15 +1,22 @@
 'use server';
 
+import { auth } from '@/lib/auth';
 import { BorrowType } from '@/types';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 
-export const getAllBorrow = async (userId: string): Promise<BorrowType[]> => {
+export const getAllBorrow = async (): Promise<BorrowType[]> => {
+    const jwtToken = await auth.api.getToken({
+        headers: await headers(),
+    });
     try {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/all-borrow/${userId}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/all-borrow`,
             {
                 method: 'GET',
-                cache: 'no-store',
+                headers: {
+                    authorization: `Bearer ${jwtToken?.token}`,
+                },
             },
         );
 
