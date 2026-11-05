@@ -14,27 +14,26 @@ const AddBookForm = () => {
         e.preventDefault();
         const form = e.currentTarget;
         const formData = new FormData(form);
-        // const bookTitle = formData.get('title') as string;
-        // const coverImage = formData.get('cover') as File;
-        const res = Object.fromEntries(formData.entries());
-        // // Image size validation
-        // const maxSize = 2 * 1024 * 1024; // 2MB
+        const bookTitle = formData.get('title') as string;
+        const coverImage = formData.get('cover') as File;
 
-        // if (coverImage && coverImage.size > 0 && coverImage.size > maxSize) {
-        //     toast.danger('Image too large', {
-        //         description: 'Maximum image size is 2MB.',
-        //     });
-        //     return;
-        // }
-        // if (!userId) {
-        //     toast.danger('Unauthorized access', {
-        //         description: 'Please log in again before adding a book.',
-        //     });
-        //     return;
-        // }
+        // Image size validation
+        const maxSize = 2 * 1024 * 1024; // 2MB
 
-        // formData.append('userId', userId);
-        console.log(res);
+        if (coverImage && coverImage.size > 0 && coverImage.size > maxSize) {
+            toast.danger('Image too large', {
+                description: 'Maximum image size is 2MB.',
+            });
+            return;
+        }
+        if (!userId) {
+            toast.danger('Unauthorized access', {
+                description: 'Please log in again before adding a book.',
+            });
+            return;
+        }
+
+        formData.append('userId', userId);
         try {
             setIsLoading(true);
             const { data, error } = await authClient.token();
@@ -52,10 +51,8 @@ const AddBookForm = () => {
                     method: 'POST',
                     headers: {
                         authorization: `Bearer ${jwtToken}`,
-                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(res),
-                    // body: formData,
+                    body: formData,
                 },
             );
 
@@ -70,9 +67,9 @@ const AddBookForm = () => {
                 return;
             }
             toast.success('Book added successfully!', {
-                description: `"" has been added to your library.`,
+                description: `${bookTitle || 'Book'} has been added to your library.`,
             });
-            // ${formData || 'Book'}
+
             form.reset();
         } catch (error) {
             console.error('Submission Error:', error);
@@ -169,7 +166,7 @@ const AddBookForm = () => {
             </div>
 
             {/* Cover Image */}
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
                 <label className="text-xs font-bold text-stone-700 uppercase tracking-wider">
                     Cover Image *
                 </label>
@@ -181,7 +178,7 @@ const AddBookForm = () => {
                     className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-emerald-700"
                     required
                 />
-            </div> */}
+            </div>
 
             {/* Description */}
             <div className="space-y-2">
