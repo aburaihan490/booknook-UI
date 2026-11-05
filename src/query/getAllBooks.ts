@@ -1,7 +1,6 @@
 'use server';
 
 import { BookType } from '@/types';
-import { notFound } from 'next/navigation';
 
 export const getAllBooks = async (): Promise<BookType[]> => {
     try {
@@ -15,17 +14,23 @@ export const getAllBooks = async (): Promise<BookType[]> => {
             cache: 'no-store',
         });
 
-        if (res.status === 404) {
-            notFound();
-        }
-
         if (!res.ok) {
             throw new Error(`Failed to fetch books: ${res.status}`);
         }
 
-        const books: BookType[] = await res.json();
+        const data = await res.json();
 
-        return books;
+        // Backend যদি সরাসরি Array পাঠায়
+        if (Array.isArray(data)) {
+            return data;
+        }
+
+        // Backend যদি { success, books } পাঠায়
+        if (Array.isArray(data.books)) {
+            return data.books;
+        }
+
+        throw new Error('Invalid books API response');
     } catch (error) {
         console.error('Get All Books Error:', error);
         throw error;
