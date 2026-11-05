@@ -1,4 +1,3 @@
-'use server';
 import { auth } from '@/lib/auth';
 import { BookType } from '@/types';
 import { headers } from 'next/headers';
@@ -16,6 +15,8 @@ export const getBookDetails = async (bookId: string): Promise<BookType> => {
                 headers: {
                     authorization: `Bearer ${jwtToken?.token}`,
                 },
+
+                next: { revalidate: 20 },
             },
         );
 

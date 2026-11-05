@@ -24,6 +24,7 @@ export const MyBooksList = async ({
         headers: {
             authorization: `Bearer ${jwtToken.token}`,
         },
+        next: { revalidate: 20 },
     });
 
     if (!res.ok) {
