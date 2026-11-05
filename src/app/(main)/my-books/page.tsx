@@ -4,11 +4,18 @@ import { MyBooksList } from '@/query/myBooks';
 import { PlusCircle } from 'lucide-react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+// 1. Force Next.js to render this route dynamically per request
+export const dynamic = 'force-dynamic';
 
 const MyBookPage = async () => {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
+    if (!session?.user?.id) {
+        redirect('/login');
+    }
 
     const userId = session?.user?.id;
     const books = await MyBooksList({ userId: userId ?? '' });

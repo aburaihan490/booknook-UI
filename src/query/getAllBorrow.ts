@@ -1,40 +1,43 @@
-'use server';
-
 import { auth } from '@/lib/auth';
 import { BorrowType } from '@/types';
 import { headers } from 'next/headers';
-import { notFound } from 'next/navigation';
 
 export const getAllBorrow = async (): Promise<BorrowType[]> => {
     const jwtToken = await auth.api.getToken({
         headers: await headers(),
     });
-    try {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/all-borrow`,
-            {
-                method: 'GET',
-                headers: {
-                    authorization: `Bearer ${jwtToken?.token}`,
-                },
-            },
-        );
-        if (response.status === 404) {
-            notFound();
-        }
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch books: ${response.status}`);
-        }
-        const result = await response.json();
-
-        if (!result.success) {
-            throw new Error(result.message || 'Something went wrong');
-        }
-
-        return result.data;
-    } catch (error) {
-        console.error('Get All Borrow Error:', error);
-        throw error;
+    if (!jwtToken?.token) {
+        throw new Error('No JWT token. Check that the jwt plugin is enabled.');
     }
+
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+    if (!baseUrl) {
+        throw new Error('BACKEND_BASE_URL is not set');
+    }
+
+    const response = await fetch(`${baseUrl}/all-borrow`, {
+        method: 'GET',
+        headers: {
+            authorization: `Bearer ${jwtToken.token}`,
+        },
+        cache: 'no-store',
+    });
+
+    if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`Failed to fetch borrows: ${response.status} ${body}`);
+    }
+
+    const result = await response.json();
+
+    // Accept either a plain array or { success, data }
+    if (Array.isArray(result)) return result;
+    if (!result.success) {
+        throw new Error(result.message || 'Something went wrong');
+    }
+    if (!Array.isArray(result.data)) {
+        throw new Error('Expected an array of borrows in result.data');
+    }
+    return result.data;
 };
