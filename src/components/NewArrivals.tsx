@@ -1,5 +1,5 @@
 import { getAllBooks } from '@/query/getAllBooks';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, BookOpen, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -30,56 +30,82 @@ const NewArrivals = async () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {newArrivals.map((book) => (
-                    <div
-                        key={book._id}
-                        className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
-                    >
-                        <div className="relative h-72 overflow-hidden bg-stone-100">
-                            <Image
-                                width={500}
-                                height={500}
-                                src={book.cover}
-                                alt={book.title}
-                                loading="eager"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                            <span className="absolute top-4 left-4 bg-stone-900/80 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">
-                                {book.category}
-                            </span>
-                            <span className="absolute top-4 right-4 bg-amber-400 text-stone-950 font-bold text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
-                                <Star size={12} className="fill-current" />{' '}
-                                {book.rating}
-                            </span>
-                        </div>
+                {newArrivals.length === 0 ? (
+                    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                        <BookOpen size={48} className="text-stone-300 mb-4" />
 
-                        <div className="p-6 flex flex-col grow justify-between space-y-4">
-                            <div>
-                                <h3 className="text-xl font-bold text-stone-900 group-hover:text-emerald-800 transition-colors line-clamp-1">
-                                    {book.title}
-                                </h3>
-                                <p className="text-sm text-stone-500 font-medium mt-1">
-                                    By {book.author}
-                                </p>
-                                <p className="text-xs text-stone-600 mt-3 line-clamp-2 leading-relaxed">
-                                    {book.description}
-                                </p>
-                            </div>
+                        <h3 className="text-xl font-bold text-stone-800">
+                            No Books Available
+                        </h3>
 
-                            <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
-                                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg">
-                                    {book.copies} Copies Available
-                                </span>
-                                <Link
-                                    href={`/books/${book._id}`}
-                                    className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white text-sm font-bold rounded-xl shadow-md transition-all hover:scale-105"
-                                >
-                                    View Details
-                                </Link>
-                            </div>
-                        </div>
+                        <p className="text-sm text-stone-500 mt-2">
+                            There are no new arrivals at the moment. Please
+                            check back later.
+                        </p>
                     </div>
-                ))}
+                ) : (
+                    newArrivals.map((book) => (
+                        <div
+                            key={book._id}
+                            className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
+                        >
+                            <div className="relative h-72 overflow-hidden bg-stone-100">
+                                {book.cover ? (
+                                    <Image
+                                        width={500}
+                                        height={500}
+                                        src={book.cover}
+                                        alt={book.title}
+                                        loading="eager"
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="flex items-center justify-center h-full text-stone-400">
+                                        <BookOpen size={40} />
+                                    </div>
+                                )}
+
+                                <span className="absolute top-4 left-4 bg-stone-900/80 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">
+                                    {book.category}
+                                </span>
+
+                                <span className="absolute top-4 right-4 bg-amber-400 text-stone-950 font-bold text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
+                                    <Star size={12} className="fill-current" />
+                                    {book.rating}
+                                </span>
+                            </div>
+
+                            <div className="p-6 flex flex-col grow justify-between space-y-4">
+                                <div>
+                                    <h3 className="text-xl font-bold text-stone-900 group-hover:text-emerald-800 transition-colors line-clamp-1">
+                                        {book.title}
+                                    </h3>
+
+                                    <p className="text-sm text-stone-500 font-medium mt-1">
+                                        By {book.author}
+                                    </p>
+
+                                    <p className="text-xs text-stone-600 mt-3 line-clamp-2 leading-relaxed">
+                                        {book.description}
+                                    </p>
+                                </div>
+
+                                <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
+                                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg">
+                                        {book.copies} Copies Available
+                                    </span>
+
+                                    <Link
+                                        href={`/books/${book._id}`}
+                                        className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white text-sm font-bold rounded-xl shadow-md transition-all hover:scale-105"
+                                    >
+                                        View Details
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
 
             <div className="text-center mt-12">

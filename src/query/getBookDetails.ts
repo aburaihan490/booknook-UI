@@ -15,8 +15,6 @@ export const getBookDetails = async (bookId: string): Promise<BookType> => {
                 headers: {
                     authorization: `Bearer ${jwtToken?.token}`,
                 },
-
-                next: { revalidate: 20 },
             },
         );
 

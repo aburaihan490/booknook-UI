@@ -8,9 +8,7 @@ export const getAllBooks = async (): Promise<BookType[]> => {
             throw new Error('BACKEND_URL is not configured');
         }
 
-        const res = await fetch(`${baseUrl}/all-books`, {
-            next: { revalidate: 20 },
-        });
+        const res = await fetch(`${baseUrl}/all-books`);
 
         if (!res.ok) {
             throw new Error(`Failed to fetch books: ${res.status}`);

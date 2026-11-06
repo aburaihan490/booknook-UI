@@ -8,7 +8,14 @@ const BorrowsContent = async () => {
     const borrow = await getAllBorrow();
     return <MyBorrowsList books={borrow ?? []} />;
 };
-const page = () => {
+
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'BookNook | My Borrows',
+};
+
+const MyBorrowPage = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
             <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
@@ -29,4 +36,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default MyBorrowPage;

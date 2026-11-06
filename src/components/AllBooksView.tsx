@@ -14,8 +14,6 @@ interface AllBooksViewProps {
 }
 
 export default function AllBooksView({ books }: AllBooksViewProps) {
-    const router = useRouter();
-
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
 

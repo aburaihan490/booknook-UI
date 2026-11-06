@@ -24,7 +24,6 @@ export const MyBooksList = async ({
         headers: {
             authorization: `Bearer ${jwtToken.token}`,
         },
-        next: { revalidate: 20 },
     });
 
     if (!res.ok) {
@@ -35,9 +34,6 @@ export const MyBooksList = async ({
     }
 
     const books = await res.json();
-    if (!Array.isArray(books)) {
-        throw new Error('Expected an array of books from backend');
-    }
 
     return books;
 };

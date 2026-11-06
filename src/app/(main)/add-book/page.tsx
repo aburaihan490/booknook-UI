@@ -1,4 +1,9 @@
 import AddBookForm from '@/components/AddBookForm';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'BookNook | Add Book',
+};
 
 const AddBookView = () => {
     return (

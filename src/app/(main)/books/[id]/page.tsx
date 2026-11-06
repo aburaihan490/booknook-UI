@@ -3,7 +3,13 @@ import Link from 'next/link';
 import { ArrowLeft, Star } from 'lucide-react';
 import { getBookDetails } from '@/query/getBookDetails';
 import BroowActionButton from '@/components/common/BroowActionButton';
-    
+
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'BookNook | Book Details',
+};
+
 export default async function BookDetails({
     params,
 }: {
