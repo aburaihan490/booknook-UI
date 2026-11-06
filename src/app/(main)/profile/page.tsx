@@ -12,11 +12,6 @@ import {
 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: 'BookNook | Profile',
-};
 const ProfilePage = () => {
     const { data: currentUser, isPending } = authClient.useSession();
     const [activeTab, setActiveTab] = useState<'books' | 'borrows'>('books');
